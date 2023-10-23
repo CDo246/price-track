@@ -1,54 +1,12 @@
-import axios from "axios";
-import puppeteer, { Page } from "puppeteer";
-
-type Product = {
-  name: string;
-  price: number;
-};
-
-async function waitForLdJsonData(page: Page): Promise<Product> {
-  await page.waitForSelector("script[type='application/ld+json']");
-
-  // For each ld json, find the one with the price
-
-  const allLdJson = page.evaluate(() => {
-    const ldJson = document.querySelectorAll(
-      "script[type='application/ld+json']"
-    );
-
-    return Array.from(ldJson).map((el) => el.innerHTML);
-  });
-
-  
-}
+import { fetchProduct } from "./price";
 
 async function main() {
-  // try {
-  //   const result = await axios.get(
-  //     "https://www.bunnings.com.au/pinnacle-1830-x-1820-x-540mm-4-tier-heavy-duty-shelving-unit-1830-x-1820-x-540mm_p2582967"
-  //   );
-  //   const html = cheerio.load(result.data);
-  //   const piss = html("script[type='application/ld+json']");
-  //   piss.each((i, el) => {
-  //     console.log(el.children[0].data);
-  //   })
-  //   console.log(piss.html());
-  // } catch (e) {
-  //   console.log(e);
-  // }
+  const url =
+    "https://www.aliexpress.com/item/1005005443708260.html?src=google&aff_fcid=73d678c5f45b47d9b9f4bac9f69eab9c-1698062879110-00282-UneMJZVf&aff_fsk=UneMJZVf&aff_platform=aaf&sk=UneMJZVf&aff_trace_key=73d678c5f45b47d9b9f4bac9f69eab9c-1698062879110-00282-UneMJZVf&terminal_id=82f61d171f8b4e14921a8c3e533787d5&afSmartRedirect=y";
 
-  const browser = await puppeteer.launch({ headless: "new" });
-  const page = await browser.newPage();
-  await page.goto(
-    "https://www.bunnings.com.au/pinnacle-1830-x-1820-x-540mm-4-tier-heavy-duty-shelving-unit-1830-x-1820-x-540mm_p2582967"
-  );
-  await Promise.any([
-    await page.waitForSelector("script[type='application/ld+json']"),
-  ]);
-  const html = await page.content();
-  const $ = cheerio.load(html);
-  const piss = $("script[type='application/ld+json']");
-  console.log(piss.html());
+  const product = await fetchProduct(url);
+
+  console.log(product);
 }
 
 main();
