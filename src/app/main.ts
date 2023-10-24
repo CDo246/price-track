@@ -6,7 +6,5 @@ async function main() {
 
   const product = await fetchProduct(url);
 
-  console.log(product);
 }
-
 main();
