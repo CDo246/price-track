@@ -1,10 +1,62 @@
 import axios from "axios";
+import fs from "fs";
+import * as cheerio from "cheerio";
 import puppeteer, { Page } from "puppeteer";
 
 type Product = {
   name: string;
   price: number;
 };
+
+function processLdJsons(allLdJson: string[]) {
+  // Parse all of them into json, and skip it if it's invalid json
+  const allLdJsonParsed = allLdJson
+    .map((json) => {
+      try {
+        return JSON.parse(json);
+      } catch (e) {
+        return null;
+      }
+    })
+    .filter(exists);
+
+  // Shallow merge all of them together into one large object
+  const mergedLdJson = allLdJsonParsed.reduce((acc, curr) => {
+    if (Array.isArray(curr)) {
+      for (const item of curr) {
+        acc = { ...acc, ...item };
+      }
+      return acc;
+    } else {
+      return { ...acc, ...curr };
+    }
+  }, {});
+
+  const name = mergedLdJson["name"];
+  if (!name) {
+    throw new Error("no name");
+  }
+
+  const offers = mergedLdJson["offers"];
+  if (!offers) {
+    throw new Error("no offers");
+  }
+
+  const firstOffer = Array.isArray(offers) ? offers[0] : offers;
+
+  const price = firstOffer["price"] || firstOffer["highPrice"];
+  if (firstOffer && price) {
+    const priceNum = Number(price);
+    if (!isNaN(priceNum)) {
+      return {
+        name,
+        price: priceNum,
+      };
+    }
+  }
+
+  throw new Error("failed");
+}
 
 async function waitForLdJsonData(
   page: Page,
@@ -26,45 +78,23 @@ async function waitForLdJsonData(
     return Array.from(ldJson).map((el) => el.innerHTML);
   });
 
-  // Parse all of them into json, and skip it if it's invalid json
-  const allLdJsonParsed = allLdJson
-    .map((json) => {
-      try {
-        return JSON.parse(json);
-      } catch (e) {
-        return null;
-      }
-    })
-    .filter(exists);
+  return processLdJsons(allLdJson);
+}
 
-  // Shallow merge all of them together into one large object
-  const mergedLdJson = allLdJsonParsed.reduce((acc, curr) => {
-    return { ...acc, ...curr };
-  }, {});
+async function tryGetLdJsonWithoutBrowser(url: string): Promise<Product> {
+  const response = await axios.get(url, {
+    headers: {
+      "User-Agent": "Wget/1.21.2",
+      Accept: "*/*",
+    },
+  });
+  const html = response.data;
 
-  const name = mergedLdJson["name"];
-  if (!name) {
-    throw new Error("no name");
-  }
+  const document = cheerio.load(html);
+  const ldJson = document("script[type='application/ld+json']");
+  const allLdJson = ldJson.map((_, el) => document(el).html()).get();
 
-  const offers = mergedLdJson["offers"];
-  if (!offers) {
-    throw new Error("no offers");
-  }
-
-  const firstOffer = Array.isArray(offers) ? offers[0] : offers;
-
-  if (firstOffer && firstOffer["price"]) {
-    const price = Number(firstOffer["price"]);
-    if (!isNaN(price)) {
-      return {
-        name,
-        price,
-      };
-    }
-  }
-
-  throw new Error("failed");
+  return processLdJsons(allLdJson);
 }
 
 async function waitForMicrodata(
@@ -153,6 +183,13 @@ const mobile = {
 };
 
 export async function fetchProduct(url: string): Promise<Product | null> {
+  try {
+    const product = await tryGetLdJsonWithoutBrowser(url);
+    return product;
+  } catch (e) {
+    // Failed to do it the naive way, do it the complex way
+  }
+
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
   await page.emulate(mobile);
@@ -181,6 +218,7 @@ export async function fetchProduct(url: string): Promise<Product | null> {
     abort.abort();
   }
 
+  await page.close();
   await browser.close();
 
   return result;
