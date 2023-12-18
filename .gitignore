@@ -42,3 +42,4 @@ dist
 db.sqlite
 
 *.db
+*.db-journal

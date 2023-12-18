@@ -7,7 +7,25 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
+model Item {
+  id    Int    @id @default(autoincrement()) 
+  entry Entry[]
+  name String
 }
+model Entry {
+  id    Int    @id @default(autoincrement()) 
+  url   String
+  meta Meta[]
+  itemId Int
+  item Item @relation(fields: [itemId], references: [id])
+}
+
+model Meta {
+  id    Int    @id @default(autoincrement()) 
+  fetchTime DateTime
+  name String
+  price Float
+  entryId Int
+  entry Entry @relation(fields: [entryId], references: [id])
+}
+
