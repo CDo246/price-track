@@ -9,15 +9,15 @@ generator client {
 
 model Item {
   id    Int    @id @default(autoincrement()) 
-  entry Entry[]
+  entries Entry[]
   name String
 }
 model Entry {
   id    Int    @id @default(autoincrement()) 
   url   String
-  meta Meta[]
+  metas Meta[]
   itemId Int
-  item Item @relation(fields: [itemId], references: [id])
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
 
 model Meta {
@@ -26,6 +26,6 @@ model Meta {
   name String
   price Float
   entryId Int
-  entry Entry @relation(fields: [entryId], references: [id])
+  entry Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 }
 
