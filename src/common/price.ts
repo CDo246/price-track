@@ -60,7 +60,7 @@ function processLdJsons(allLdJson: string[]) {
 
 async function waitForLdJsonData(
   page: Page,
-  abort: AbortSignal
+  abort: AbortSignal,
 ): Promise<Product> {
   await page.waitForSelector("script[type='application/ld+json']", {
     signal: abort,
@@ -72,7 +72,7 @@ async function waitForLdJsonData(
   // For each ld json, find the one with the price
   const allLdJson = await page.evaluate(() => {
     const ldJson = document.querySelectorAll(
-      "script[type='application/ld+json']"
+      "script[type='application/ld+json']",
     );
 
     return Array.from(ldJson).map((el) => el.innerHTML);
@@ -99,7 +99,7 @@ async function tryGetLdJsonWithoutBrowser(url: string): Promise<Product> {
 
 async function waitForMicrodata(
   page: Page,
-  abort: AbortSignal
+  abort: AbortSignal,
 ): Promise<Product> {
   await page.waitForSelector("[itemprop='price']", {
     signal: abort,

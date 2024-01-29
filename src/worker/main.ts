@@ -59,11 +59,13 @@ async function createNewItem(url: string) {
 
 async function createEntryForItem(itemId: number, url: string) {
   //checking for duplicate entry
-  const existing = await prisma.entry.findFirst({where: {itemId: itemId, url: url}});
+  const existing = await prisma.entry.findFirst({
+    where: { itemId: itemId, url: url },
+  });
   if (existing != null) {
-    throw new Error("Entry already exists");
+    throw new Error(`Entry ${url} already exists`);
   }
-  
+
   const product = await fetchProduct(url);
   if (product === null) {
     throw new Error("Failed to fetch product");
@@ -80,7 +82,7 @@ async function createEntryForItem(itemId: number, url: string) {
       entryId: entry.id,
     },
   });
-  console.log(`Created ${entry}`);
+  console.log(`Created new entry for ${entry.url}`);
 }
 
 async function updateEntryMetas() {
@@ -104,15 +106,28 @@ async function updateEntryMetas() {
 }
 
 async function deleteEntry(entryId: number) {
-  await prisma.entry.delete({ where: { id: entryId }});
+  await prisma.entry.delete({ where: { id: entryId } });
 }
 
 async function deleteItem(itemId: number) {
   await prisma.item.delete({ where: { id: itemId } });
 }
 
-// createEntryForItem(
-//   2, "https://www.amazon.com.au/SteelSeries-Arctis-Wireless-Multi-Platform-Headset/dp/B09ZWCYQTX?th=1"
-// );
+async function renameItem(itemId: number, newName: string) {
+  await prisma.item.update({ where: { id: itemId }, data: { name: newName } });
+  console.log(`Renamed item ${itemId} to ${newName}`);
+}
 
-deleteItem(1)
+async function fetchAllItems() {
+  const items = await prisma.item.findMany();
+  console.log(items);
+  return items;
+}
+
+//fetching item list, item entries and metas
+//renaming function
+
+createEntryForItem(
+  4,
+  "https://www.anacondastores.com/camping-hiking/hydration/water-bottles/camelbak-chute-mag-12l-stainless-steel-insulated-water-bottle/BP90171385-black",
+);
