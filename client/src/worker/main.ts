@@ -1,4 +1,4 @@
-import { prisma } from "../../prisma";
+import { prisma } from "../../../prisma";
 import { fetchProduct } from "../common/price";
 
 // async function fetchFromManyURL() {
@@ -129,5 +129,5 @@ async function fetchAllItems() {
 
 createEntryForItem(
   4,
-  "https://www.anacondastores.com/camping-hiking/hydration/water-bottles/camelbak-chute-mag-12l-stainless-steel-insulated-water-bottle/BP90171385-black",
+  "https://www.anacondastores.com/camping-hiking/hydration/water-bottles/camelbak-chute-mag-12l-stainless-steel-insulated-water-bottle/BP90171385-black"
 );
