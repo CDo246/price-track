@@ -2,9 +2,6 @@ import { defineConfig } from "tsup";
 import path from "path";
 
 export default defineConfig(({ watch, entry, external }) => {
-  const filename =
-    entry && Array.isArray(entry) && path.basename(entry[0], ".ts");
-
   return {
     entry: ["src/server.ts"],
     splitting: true,
@@ -16,7 +13,7 @@ export default defineConfig(({ watch, entry, external }) => {
     dts: false,
     bundle: true,
     metafile: true,
-    onSuccess: `node --enable-source-maps dist/${filename}.mjs --inspect`,
+    onSuccess: `node --enable-source-maps dist/server.mjs --inspect`,
     loader: {
       ".json": "copy",
     },

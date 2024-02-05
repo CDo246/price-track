@@ -1,4 +1,4 @@
-import { prisma } from "../../../prisma";
+import { prisma } from "../../prisma";
 import { fetchProduct } from "../common/price";
 
 // async function fetchFromManyURL() {
@@ -29,7 +29,7 @@ import { fetchProduct } from "../common/price";
 
 // }
 
-async function createNewItem(url: string) {
+export async function createNewItem(url: string) {
   const product = await fetchProduct(url);
   if (product === null) {
     throw new Error("Failed to fetch product");
@@ -57,7 +57,7 @@ async function createNewItem(url: string) {
   });
 }
 
-async function createEntryForItem(itemId: number, url: string) {
+export async function createEntryForItem(itemId: number, url: string) {
   //checking for duplicate entry
   const existing = await prisma.entry.findFirst({
     where: { itemId: itemId, url: url },
@@ -85,7 +85,7 @@ async function createEntryForItem(itemId: number, url: string) {
   console.log(`Created new entry for ${entry.url}`);
 }
 
-async function updateEntryMetas() {
+export async function updateEntryMetas() {
   const entries = await prisma.entry.findMany();
   for (let entry of entries) {
     console.log("Fetching", entry.url);
@@ -105,20 +105,20 @@ async function updateEntryMetas() {
   }
 }
 
-async function deleteEntry(entryId: number) {
+export async function deleteEntry(entryId: number) {
   await prisma.entry.delete({ where: { id: entryId } });
 }
 
-async function deleteItem(itemId: number) {
+export async function deleteItem(itemId: number) {
   await prisma.item.delete({ where: { id: itemId } });
 }
 
-async function renameItem(itemId: number, newName: string) {
+export async function renameItem(itemId: number, newName: string) {
   await prisma.item.update({ where: { id: itemId }, data: { name: newName } });
   console.log(`Renamed item ${itemId} to ${newName}`);
 }
 
-async function fetchAllItems() {
+export async function fetchAllItems() {
   const items = await prisma.item.findMany();
   console.log(items);
   return items;
@@ -127,7 +127,3 @@ async function fetchAllItems() {
 //fetching item list, item entries and metas
 //renaming function
 
-createEntryForItem(
-  4,
-  "https://www.anacondastores.com/camping-hiking/hydration/water-bottles/camelbak-chute-mag-12l-stainless-steel-insulated-water-bottle/BP90171385-black"
-);
