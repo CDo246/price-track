@@ -1,5 +1,5 @@
 import { prisma } from "../../prisma";
-import { fetchProduct } from "../common/price";
+import { fetchProduct } from "./price";
 
 // async function fetchFromManyURL() {
 //   const urls = [
@@ -34,7 +34,7 @@ export async function createNewItem(url: string) {
   if (product === null) {
     throw new Error("Failed to fetch product");
   }
-  await prisma.item.create({
+  const newItem = await prisma.item.create({
     data: {
       name: product.name,
       entries: {
@@ -55,6 +55,7 @@ export async function createNewItem(url: string) {
       },
     },
   });
+  return newItem;
 }
 
 export async function createEntryForItem(itemId: number, url: string) {
@@ -122,6 +123,15 @@ export async function fetchAllItems() {
   const items = await prisma.item.findMany();
   console.log(items);
   return items;
+}
+
+export async function fetchItemData(itemId: number) {
+  const item = await prisma.item.findUnique({
+    where: { id: itemId },
+    include: { entries: { include: { metas: true } } },
+  });
+  console.log(item);
+  return item;
 }
 
 //fetching item list, item entries and metas
