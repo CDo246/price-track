@@ -1,5 +1,10 @@
+import { createHTTPServer } from "@trpc/server/adapters/standalone";
+import { appRouter } from "./routes";
+import cors from "cors";
 
+const server = createHTTPServer({
+  router: appRouter,
+  middleware: cors(),
+});
 
-import { createNewItem } from "./worker/database_functions";
-
-createNewItem("https://www.uniqlo.com/au/en/products/E465791-000?colorCode=COL72&sizeCode=SMA001");
+server.listen(3030);

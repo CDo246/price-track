@@ -7,7 +7,7 @@ import {
 import { z } from "zod";
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 
-const appRouter = router({
+export const appRouter = router({
   fetchAllItems: publicProcedure.query(async () => {
     return fetchAllItems();
   }),
@@ -31,8 +31,3 @@ const appRouter = router({
 // NOT the router itself.
 export type AppRouter = typeof appRouter;
 
-const server = createHTTPServer({
-  router: appRouter,
-});
- 
-server.listen(3000);

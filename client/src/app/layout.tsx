@@ -1,3 +1,4 @@
+import { TRPCProvider } from "../trpc";
 import "./globals.css";
 
 export default function RootLayout({
@@ -7,7 +8,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <TRPCProvider>
+        <body>{children}</body>
+      </TRPCProvider>
     </html>
   );
 }
