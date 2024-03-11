@@ -86,6 +86,31 @@ export async function createEntryForItem(itemId: number, url: string) {
   console.log(`Created new entry for ${entry.url}`);
 }
 
+export async function updateEntryMeta(entryId: number) {
+  const entry = await prisma.entry.findUnique({
+    where: { id: entryId },
+    include: { metas: { orderBy: { fetchTime: "desc" }, take: 1 } },
+  });
+  if (!entry) {
+    return;
+  }
+  
+  console.log("Fetching", entry.url);
+  const product = await fetchProduct(entry.url);
+  if (product === null) {
+    return;
+  }
+  await prisma.meta.create({
+    data: {
+      fetchTime: new Date(),
+      name: product.name,
+      price: product.price,
+      entry: { connect: { id: entry.id } },
+    },
+  });
+  console.log("Updated", product);
+}
+
 export async function updateEntryMetas() {
   const entries = await prisma.entry.findMany();
   for (let entry of entries) {
@@ -133,7 +158,3 @@ export async function fetchItemData(itemId: number) {
   console.log(item);
   return item;
 }
-
-//fetching item list, item entries and metas
-//renaming function
-
