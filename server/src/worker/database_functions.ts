@@ -94,7 +94,7 @@ export async function updateEntryMeta(entryId: number) {
   if (!entry) {
     return;
   }
-  
+
   console.log("Fetching", entry.url);
   const product = await fetchProduct(entry.url);
   if (product === null) {
@@ -111,7 +111,7 @@ export async function updateEntryMeta(entryId: number) {
   console.log("Updated", product);
 }
 
-export async function updateEntryMetas() {
+export async function updateAndCheckEntryMetas() {
   const entries = await prisma.entry.findMany();
   for (let entry of entries) {
     console.log("Fetching", entry.url);
