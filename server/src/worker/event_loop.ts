@@ -1,4 +1,5 @@
 import { prisma } from "../../prisma";
+import { sendPriceChangeEmail } from "./mail";
 import { fetchProduct } from "./price";
 
 export type UpdatedEntry = {
@@ -60,4 +61,11 @@ export async function updateAndCheckEntryMetas(): Promise<UpdatedEntry[]> {
   }
 
   return priceChanged;
+}
+
+export async function eventLoopStep() {
+  const priceChanged = await updateAndCheckEntryMetas();
+  if (priceChanged.length > 0) {
+    sendPriceChangeEmail(priceChanged);
+  }
 }

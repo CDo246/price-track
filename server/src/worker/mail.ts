@@ -2,12 +2,17 @@ import nodemailer from "nodemailer";
 import { UpdatedEntry } from "./event_loop";
 import Mail from "nodemailer/lib/mailer";
 
-export async function sendPriceChangeEmails(updatedEntry: UpdatedEntry[]) {
+export async function sendPriceChangeEmail(updatedEntry: UpdatedEntry[]) {
   const perEntryHTML = updatedEntry.map((entry) => {
+    let aud = Intl.NumberFormat("en-AU", {
+      style: "currency",
+      currency: "AUD",
+      useGrouping: false,
+    });
     return `
       <div>
         <h2>${entry.name}</h2>
-        <p>Price changed from ${entry.beforePrice} to ${entry.afterPrice}</p>
+        <p>Price changed from ${aud.format(entry.beforePrice ?? 0)} to ${aud.format(entry.afterPrice)}</p>
         <a href="${entry.url}">View product</a>
       </div>
     `;
@@ -35,6 +40,7 @@ export async function sendPriceChangeEmails(updatedEntry: UpdatedEntry[]) {
     html,
   };
 
+  console.log("Sending email");
   const result = new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -44,5 +50,7 @@ export async function sendPriceChangeEmails(updatedEntry: UpdatedEntry[]) {
       }
     });
   });
+
   await result;
+  console.log("Email sent");
 }

@@ -1,6 +1,12 @@
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import { appRouter } from "./routes";
 import cors from "cors";
+import { sendPriceChangeEmail } from "./worker/mail";
+import dotenv from "dotenv";
+import { eventLoopStep } from "./worker/event_loop";
+
+dotenv.config();
+dotenv.config({ path: "../.env" });
 
 const server = createHTTPServer({
   router: appRouter,
@@ -9,8 +15,4 @@ const server = createHTTPServer({
 
 server.listen(3030);
 
-async function eventLoop() {
-  while (true) {
-    await new Promise((resolve) => setTimeout(resolve, 1000 * 60 * 60 * 2));
-  }
-}
+eventLoopStep();
