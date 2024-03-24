@@ -4,6 +4,7 @@ import cors from "cors";
 import { sendPriceChangeEmail } from "./worker/mail";
 import dotenv from "dotenv";
 import { eventLoopStep } from "./worker/event_loop";
+import { CronJob } from "cron";
 
 dotenv.config();
 dotenv.config({ path: "../.env" });
@@ -15,4 +16,15 @@ const server = createHTTPServer({
 
 server.listen(3030);
 
-eventLoopStep();
+CronJob.from({
+  cronTime: "0 */6 * * *",
+  onTick: () => {
+    console.log("It has been 6 hours, time to check prices!");
+    eventLoopStep();
+  },
+  start: true,
+  timeZone: "Australia/Sydney",
+});
+
+// '0 */6 * * *'
+// */2 * * * *

@@ -66,6 +66,7 @@ export async function updateAndCheckEntryMetas(): Promise<UpdatedEntry[]> {
 export async function eventLoopStep() {
   const priceChanged = await updateAndCheckEntryMetas();
   if (priceChanged.length > 0) {
-    sendPriceChangeEmail(priceChanged);
+    await sendPriceChangeEmail(priceChanged);
   }
+  console.log("Checked all prices");
 }
