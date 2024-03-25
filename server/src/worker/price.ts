@@ -60,7 +60,7 @@ function processLdJsons(allLdJson: string[]) {
 
 async function waitForLdJsonData(
   page: Page,
-  abort: AbortSignal,
+  abort: AbortSignal
 ): Promise<Product> {
   await page.waitForSelector("script[type='application/ld+json']", {
     signal: abort,
@@ -72,7 +72,7 @@ async function waitForLdJsonData(
   // For each ld json, find the one with the price
   const allLdJson = await page.evaluate(() => {
     const ldJson = document.querySelectorAll(
-      "script[type='application/ld+json']",
+      "script[type='application/ld+json']"
     );
 
     return Array.from(ldJson).map((el) => el.innerHTML);
@@ -99,7 +99,7 @@ async function tryGetLdJsonWithoutBrowser(url: string): Promise<Product> {
 
 async function waitForMicrodata(
   page: Page,
-  abort: AbortSignal,
+  abort: AbortSignal
 ): Promise<Product> {
   await page.waitForSelector("[itemprop='price']", {
     signal: abort,
@@ -190,7 +190,12 @@ export async function fetchProduct(url: string): Promise<Product | null> {
     // Failed to do it the naive way, do it the complex way
   }
 
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({
+    headless: "new",
+    executablePath: process.env.CHROME_BIN,
+    // We are running in docker, so we need to disable sandbox
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
   await page.emulate(mobile);
 
