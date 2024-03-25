@@ -19,6 +19,6 @@ RUN yarn install
 
 RUN yarn client build
 
-CMD yarn concurrently "yarn server dev" "yarn client start"
+CMD yarn server prisma migrate deploy && yarn concurrently "yarn server dev" "yarn client start"
 
 
