@@ -3,9 +3,10 @@ import {
   fetchAllItemsWithData,
   fetchItemData,
   createNewItem,
+  deleteItem
 } from "../worker/database_functions";
 import { z } from "zod";
-import { createHTTPServer } from '@trpc/server/adapters/standalone';
+import { createHTTPServer } from "@trpc/server/adapters/standalone";
 
 export const appRouter = router({
   fetchAllItemsWithData: publicProcedure.query(async () => {
@@ -25,9 +26,15 @@ export const appRouter = router({
       const url = input.url;
       return createNewItem(url);
     }),
+
+  deleteItem: publicProcedure
+    .input(z.object({ itemId: z.number() }))
+    .mutation(async ({ input }) => {
+      const itemId = input.itemId;
+      return deleteItem(itemId);
+    }),
 });
 
 // Export type router type signature,
 // NOT the router itself.
 export type AppRouter = typeof appRouter;
-

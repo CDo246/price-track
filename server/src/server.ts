@@ -5,7 +5,6 @@ import { sendPriceChangeEmail } from "./worker/mail";
 import dotenv from "dotenv";
 import { eventLoopStep } from "./worker/event_loop";
 import { CronJob } from "cron";
-
 dotenv.config();
 dotenv.config({ path: "../.env" });
 
@@ -17,9 +16,9 @@ const server = createHTTPServer({
 server.listen(3030);
 
 CronJob.from({
-  cronTime: "0 */6 * * *",
+  cronTime: process.env.SCRAPE_INTERVAL!,
   onTick: () => {
-    console.log("It has been 6 hours, time to check prices!");
+    console.log("Time to fetch prices!");
     eventLoopStep();
   },
   start: true,

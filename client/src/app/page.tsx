@@ -10,7 +10,7 @@ export default function Home() {
   const items = trpc.fetchAllItemsWithData.useQuery();
   console.log(items.data);
   return (
-    <div className = "flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <h1 className="text-3xl font-bold text-center">
         silly little pricetracker
       </h1>
@@ -23,7 +23,9 @@ export default function Home() {
           ))}
         </ul>
       )}
-      <div className="mt-auto"><AddItemForm /></div>
+      <div className="mt-auto">
+        <AddItemForm />
+      </div>
     </div>
   );
   // return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
@@ -41,9 +43,27 @@ function ItemDisplay(props: { item: ItemWithData }) {
     useGrouping: false,
   });
 
+  const deleteItem = trpc.deleteItem.useMutation();
+  const utils = trpc.useUtils();
   return (
-    <li>
-      {props.item.name}, {aud.format(minPrice)}
+    <li className="flex items-center mb-2">
+      <div>
+        {props.item.name}, <b>{aud.format(minPrice)}</b>
+      </div>
+      <button
+        onClick={async (e) => {
+          try {
+            await deleteItem.mutateAsync({ itemId: props.item.id });
+            utils.fetchAllItemsWithData.invalidate();
+          } catch (e: any) {
+            console.log("Failed to delete item.", e);
+          }
+        }}
+        disabled={deleteItem.isPending}
+        className="btn btn-error ml-2 p-2 h-auto min-h-fit"
+      >
+        delete
+      </button>
     </li>
   );
 }
