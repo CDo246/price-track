@@ -99,8 +99,14 @@ export async function renameItem(itemId: number, newName: string) {
   console.log(`Renamed item ${itemId} to ${newName}`);
 }
 
-export async function fetchAllItems() {
-  const items = await prisma.item.findMany();
+export async function fetchAllItemsWithData() {
+  const items = await prisma.item.findMany({
+    include: {
+      entries: {
+        include: { metas: { orderBy: { fetchTime: "desc" }, take: 1 }},
+      },
+    },
+  });
   console.log(items);
   return items;
 }

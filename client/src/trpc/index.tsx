@@ -1,11 +1,17 @@
 "use client";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import type { AppRouter } from "../../../server/src/routes/index.js";
+import type { AppRouter } from "@server/src/routes";
 import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { inferProcedureOutput } from "@trpc/server";
 
 export const trpc = createTRPCReact<AppRouter>();
+
+export type AllProcedures = keyof AppRouter["_def"]["procedures"];
+export type ProcedureOutput<T extends AllProcedures> = inferProcedureOutput<
+  AppRouter["_def"]["procedures"][T]
+>;
 
 export function TRPCProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());

@@ -1,6 +1,6 @@
 import { publicProcedure, router } from "../trpc";
 import {
-  fetchAllItems,
+  fetchAllItemsWithData,
   fetchItemData,
   createNewItem,
 } from "../worker/database_functions";
@@ -8,8 +8,8 @@ import { z } from "zod";
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 
 export const appRouter = router({
-  fetchAllItems: publicProcedure.query(async () => {
-    return fetchAllItems();
+  fetchAllItemsWithData: publicProcedure.query(async () => {
+    return fetchAllItemsWithData();
   }),
 
   fetchItemData: publicProcedure
