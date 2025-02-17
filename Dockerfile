@@ -15,7 +15,7 @@ WORKDIR /app
 
 COPY . . 
 
-RUN pnpm install
+RUN PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 pnpm install
 
 RUN pnpm run client build
 
