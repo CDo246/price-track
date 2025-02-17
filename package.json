@@ -12,16 +12,16 @@
   "private": true,
   "scripts": {
     "format": "prettier . --write",
-    "client": "cd client && yarn",
-    "server": "cd server && yarn"
+    "client": "cd client && pnpm",
+    "server": "cd server && pnpm"
   },
   "devDependencies": {
-    "@types/node": "^20.8.3",
-    "prettier": "3.2.4",
+    "@types/node": "^22.13.4",
+    "prettier": "3.5.1",
     "tsc": "^2.0.4",
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^9.1.2"
   }
 }

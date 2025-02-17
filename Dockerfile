@@ -15,10 +15,10 @@ WORKDIR /app
 
 COPY . . 
 
-RUN yarn install
+RUN pnpm install
 
-RUN yarn client build
+RUN pnpm run client build
 
-CMD yarn server prisma migrate deploy && yarn concurrently "yarn server dev" "yarn client start"
+CMD pnpm run server prisma migrate deploy && pnpm run concurrently "pnpm run server dev" "pnpm run client start"
 
 

@@ -4,26 +4,27 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "scrape": "yarn tsup src/app/main.ts",
+    "scrape": "pnpm tsup src/app/main.ts",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "devDependencies": {
-    "@types/react": "18.2.31",
+    "@types/react": "19.0.10",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5"
+    "tailwindcss": "^4.0.6"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.0.6",
     "@tanstack/react-query": "^5.18.1",
     "@trpc/client": "^11.0.0-next-beta.264",
     "@trpc/next": "^11.0.0-next-beta.264",
     "@trpc/react-query": "^11.0.0-next-beta.264",
     "daisyui": "^4.8.0",
-    "next": "^13.5.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "next": "^15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }
