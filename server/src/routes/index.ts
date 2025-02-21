@@ -7,6 +7,7 @@ import {
 } from "../worker/database_functions";
 import { z } from "zod";
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
+import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 export const appRouter = router({
   fetchAllItemsWithData: publicProcedure.query(async () => {
@@ -38,3 +39,6 @@ export const appRouter = router({
 // Export type router type signature,
 // NOT the router itself.
 export type AppRouter = typeof appRouter;
+
+export type RouterInputs = inferRouterInputs<AppRouter>;
+export type RouterOutputs = inferRouterOutputs<AppRouter>;
