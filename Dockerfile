@@ -20,6 +20,7 @@ COPY . .
 RUN PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 pnpm install
 
 RUN pnpm run client build
+RUN pnpm run server prisma generate
 
 CMD pnpm run server prisma migrate deploy && pnpm run concurrently "pnpm run server dev" "pnpm run client start"
 
