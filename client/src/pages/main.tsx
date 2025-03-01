@@ -1,18 +1,15 @@
-"use client";
-import { inferReactQueryProcedureOptions } from "@trpc/react-query";
 import { trpc } from "../trpc";
-import type { AppRouter, RouterOutputs } from "@server/src/routes";
+import type { RouterOutputs } from "@server/routes";
 import { useState } from "react";
-import { create } from "domain";
 
 // Import shadcn components
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
-export default function Home() {
+export function MainPage() {
   const items = trpc.fetchAllItemsWithData.useQuery();
 
   return (
@@ -47,12 +44,12 @@ export default function Home() {
 type ItemWithData = RouterOutputs['fetchAllItemsWithData'][number]
 
 function ItemDisplay(props: { item: ItemWithData }) {
-  let prices = props.item.entries.map((entry) => entry.metas[0].price);
-  let minPrice = Math.min(...prices);
-  let maxPrice = Math.max(...prices);
-  let url = props.item.entries[0]?.url;
+  const prices = props.item.entries.map((entry) => entry.metas[0].price);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const url = props.item.entries[0]?.url;
 
-  let aud = Intl.NumberFormat("en-AU", {
+  const aud = Intl.NumberFormat("en-AU", {
     style: "currency",
     currency: "AUD",
     useGrouping: true,
@@ -89,7 +86,7 @@ function ItemDisplay(props: { item: ItemWithData }) {
           <Button
             variant="destructive"
             size="sm"
-            onClick={async (e) => {
+            onClick={async () => {
               try {
                 await deleteItem.mutateAsync({ itemId: props.item.id });
                 utils.fetchAllItemsWithData.invalidate();
@@ -97,9 +94,9 @@ function ItemDisplay(props: { item: ItemWithData }) {
                 console.log("Failed to delete item.", e);
               }
             }}
-            disabled={deleteItem.isPending}
+            disabled={deleteItem.isLoading}
           >
-            {deleteItem.isPending ? (
+            {deleteItem.isLoading ? (
               <span className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span>deleting...</span>
@@ -143,8 +140,8 @@ function AddItemForm() {
           onChange={(e) => setUrl(e.target.value)}
           className="flex-1"
         />
-        <Button type="submit" disabled={createItem.isPending || !url.trim()}>
-          {createItem.isPending ? (
+        <Button type="submit" disabled={createItem.isLoading || !url.trim()}>
+          {createItem.isLoading ? (
             <span className="flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
               Adding...
@@ -161,7 +158,7 @@ function AddItemForm() {
         </Alert>
       )}
 
-      {createItem.isPending && (
+      {createItem.isLoading && (
         <Alert>
           <AlertDescription>Adding item to your tracker...</AlertDescription>
         </Alert>

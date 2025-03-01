@@ -1,5 +1,4 @@
 import axios from "axios";
-import fs from "fs";
 import * as cheerio from "cheerio";
 import puppeteer, { Page } from "puppeteer";
 
@@ -191,7 +190,7 @@ export async function fetchProduct(url: string): Promise<Product | null> {
   }
 
   const browser = await puppeteer.launch({
-    headless: "new",
+    headless: "shell",
     executablePath: process.env.CHROME_BIN,
     // We are running in docker, so we need to disable sandbox
     args: ["--no-sandbox", "--disable-setuid-sandbox"],

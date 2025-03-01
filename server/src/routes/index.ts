@@ -6,7 +6,6 @@ import {
   deleteItem
 } from "../worker/database_functions";
 import { z } from "zod";
-import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 export const appRouter = router({

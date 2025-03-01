@@ -1,5 +1,7 @@
 @import "tailwindcss";
-@config "../../tailwind.config.js";
+@plugin "tailwindcss-animate";
+@config "../tailwind.config.js";
+
 @layer base {
   :root {
     --background: 253 76% 5%;

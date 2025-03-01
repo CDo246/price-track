@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install gnupg wget -y && \
 RUN npm install -g pnpm
 
 ENV CHROME_BIN=/usr/bin/google-chrome
+ENV NODE_ENV=production
 
 WORKDIR /app
 
@@ -19,9 +20,7 @@ COPY . .
 
 RUN PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 pnpm install
 
-RUN pnpm run client build
 RUN pnpm run server prisma generate
+RUN pnpm run client build
 
-CMD pnpm run server prisma migrate deploy && pnpm concurrently "pnpm run server dev" "pnpm run client start"
-
-
+CMD pnpm run server prisma migrate deploy && pnpm run server dev
